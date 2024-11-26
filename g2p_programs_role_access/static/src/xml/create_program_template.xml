@@ -3,8 +3,7 @@
     <t t-name="CustomListViewButtonsExtended" t-inherit="web.ListView.Buttons" t-inherit-mode="extension">
         <xpath expr="//button[contains(@class, 'o_list_button_add_program')]" position="attributes">
         
-            <!-- Make sure the condition is correctly referencing the controller's property is_manager -->
-            <attribute name="t-if">is_manager</attribute>
+            <attribute name="t-if">is_manager and model.root.resModel == 'g2p.program'</attribute>
             <attribute name="class">btn btn-primary o_list_button_add_program_blue</attribute>
 
         </xpath>

@@ -116,8 +116,9 @@ body {
     border-radius: 4px !important;
     border: 1px solid #e27d21 !important;
     color: #ffffff !important;
-    min-width: 90px;
-    height: 31px;
+    min-width: 51.28px;
+    height: 33px;
+    margin-right: 3px
 }
 
 .o_list_button_add:focus,
@@ -142,8 +143,9 @@ body {
     background: #ffffff 0% 0% no-repeat padding-box !important;
     border: 1px solid #e27d21 !important;
     border-radius: 4px !important;
-    min-width: 90px;
-    height: 31px;
+    min-width: 51.28px;
+    height: 33px;
+    margin-right: 3px;
     color: #e27d21 !important;
 }
 
@@ -167,17 +169,11 @@ main {
 
 .o_cp_action_menus .dropdown-toggle,
 .o_cp_action_menus .dropdown-toggle:active {
-    background: #ffffff 0% 0% no-repeat padding-box !important;
-    border: 1px solid #e27d21 !important;
-    border-radius: 4px !important;
     color: #e27d21 !important;
-    min-width: 60px;
-    height: 31px;
 }
 
 .o_form_sheet_bg .o_form_sheet {
     background: #ffffff 0% 0% no-repeat padding-box;
-    /*    box-shadow: 0px 3px 16px #0000001a;*/
     border-radius: 10px;
     opacity: 1;
 }

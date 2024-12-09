@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <record id="fetch_social_registry_beneficiary_tree" model="ir.ui.view">
@@ -18,36 +18,42 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <button
+                        name="fetch_social_registry_beneficiary"
+                        string="Import"
+                        type="object"
+                        class="oe_highlight btn-primary"
+                    />
+
                     <group>
                         <field name="name" />
                         <field name="data_source_id" />
-                        <field name="import_registrant_without_id" />
                         <field name="target_registry" />
                         <field name="target_program" />
-                        <field name="query" />
                         <field name="last_sync_date" />
                         <field
-                            name="imported_registrant_ids"
-                            options="{'no_open':True,'no_create':True,'no_create_edit':True}"
-                        >
-                                <tree>
-                                    <field name="registrant_id" />
-                                    <field name="is_group" />
-                                    <field name="is_created" />
-                                    <field name="is_updated" />
-                                </tree>
-                            </field>
-                        <button
-                            name="fetch_social_registry_beneficiary"
-                            string="Fetch"
-                            type="object"
-                            class="oe_highlight btn-primary"
+                            name="query_domain"
+                            widget="domain"
+                            options="{'model': 'res.partner'}"
                         />
+                        <field name="field_to_import" />
+                        <field
+                            name="imported_registrant_ids"
+                            options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"
+                        >
+                            <tree>
+                                <field name="registrant_id" />
+                                <field name="is_group" />
+                                <field name="is_created" />
+                                <field name="is_updated" />
+                            </tree>
+                        </field>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
+
 
     <record id="fetch_social_registry_beneficiary_action_window" model="ir.actions.act_window">
         <field name="name">Previous Search Criterias</field>

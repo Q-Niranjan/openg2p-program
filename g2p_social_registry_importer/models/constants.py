@@ -1,4 +1,4 @@
-GRAPHQL = "graphql"
+QUERY_TYPE = "graphql"
 
 DATA_SOURCE_NAME = "Social Registry"
 DATA_SOURCE_SEARCH_PATH_NAME = "Registry Sync Search"

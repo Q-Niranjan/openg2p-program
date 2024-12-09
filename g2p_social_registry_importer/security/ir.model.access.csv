@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_social_registry_beneficiary,G2P Fetch Social Registry Beneficiary Access,model_g2p_fetch_social_registry_beneficiary,,1,1,1,1
 access_social_registry_imported_individuals,G2P Social Registry Imported Beneficiary Access,model_g2p_social_registry_imported_registrants,,1,1,1,1
+access_social_registry_auth,G2P Social Registry Auth Access,model_social_registry_auth,,1,1,1,1
+access_social_registry_partner_processor,G2P Social Registry Partner Processor Access,model_social_registry_partner_processor,,1,1,1,1
+access_social_registry_record_processor,G2P Social Registry Record Processor Access,model_social_registry_record_processor,,1,1,1,1

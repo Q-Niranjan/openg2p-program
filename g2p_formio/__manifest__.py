@@ -17,6 +17,7 @@
         "g2p_program_documents",
     ],
     "data": [
+        "data/g2p_formio_inherit_data.xml",
         "views/formio_builder.xml",
         "views/program_view.xml",
         "wizard/g2p_self_service_program_view_wizard.xml",

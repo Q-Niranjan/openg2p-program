@@ -12,7 +12,7 @@ Part of OpenG2P. See LICENSE file for full copyright and licensing details.
                 <page string="Portal Form">
                     <group>
                         <field name="is_multiple_form_submission" />
-                        <field name="self_service_portal_form" />
+                        <field name="portal_form_builder_id" />
                     </group>
                 </page>
             </xpath>

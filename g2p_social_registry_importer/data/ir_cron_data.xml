@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="ir_cron_process_social_registry_imports" model="ir.cron">
+            <field name="name">Process Social Registry Imports</field>
+            <field name="model_id" ref="model_g2p_fetch_social_registry_beneficiary"/>
+            <field name="state">code</field>
+            <field name="code">model.fetch_social_registry_beneficiary()</field>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+</odoo>

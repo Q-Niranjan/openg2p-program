@@ -3,12 +3,12 @@
     <function
         model="ir.config_parameter"
         name="set_param"
-        eval="('g2p_import_social_registry.client_id', 'openg2p-admin-client')"
+        eval="('g2p_import_social_registry.client_id', 'openg2p-sr-dev')"
     />
     <function
         model="ir.config_parameter"
         name="set_param"
-        eval="('g2p_import_social_registry.client_password', '')"
+        eval="('g2p_import_social_registry.client_password', 'He8v5m67K5Ww2WIo6WIxwMXBWGIBUnq7')"
     />
     <function
         model="ir.config_parameter"
@@ -18,6 +18,13 @@
     <function
         model="ir.config_parameter"
         name="set_param"
-        eval="('g2p_import_social_registry.max_registrants_count_job_queue', 100)"
+        eval="('g2p_import_social_registry.max_registrants_count_job_queue', 25)"
+    />
+
+    <!-- This configuration helps to enable or disable the background processing. -->
+    <function
+        model="ir.config_parameter"
+        name="set_param"
+        eval="('g2p_import_social_registry.enable_async', False)"
     />
 </odoo>

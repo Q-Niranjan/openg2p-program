@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
+    <!-- Define the action first -->
+    <record id="action_social_registry_import_action" model="ir.actions.server">
+        <field name="name">Import Social Registry beneficiary</field>
+        <field name="model_id" ref="model_g2p_fetch_social_registry_beneficiary" />
+        <field name="binding_model_id" ref="model_g2p_fetch_social_registry_beneficiary" />
+        <field name="state">code</field>
+        <field name="code">
+            action = records.social_registry_import_action_trigger()
+        </field>
+    </record>
+
     <record id="fetch_social_registry_beneficiary_tree" model="ir.ui.view">
         <field name="name">fetch_social_registry_beneficiary_tree</field>
         <field name="model">g2p.fetch.social.registry.beneficiary</field>
@@ -8,6 +19,31 @@
             <tree>
                 <field name="name" string="Search Criteria" />
                 <field name="create_date" />
+                <field name="job_status" />
+                <button
+                    type="action"
+                    name="%(action_social_registry_import_action)d"
+                    string="Start"
+                    icon="fa-play"
+                    class="oe_highlight"
+                    invisible="job_status not in ('draft', 'completed')"
+                />
+                <button
+                    type="action"
+                    name="%(action_social_registry_import_action)d"
+                    string="Stop"
+                    icon="fa-stop"
+                    class="oe_highlight"
+                    invisible="job_status not in ('started', 'running')"
+                />
+                 <button
+                    type="action"
+                    name="%(action_social_registry_import_action)d"
+                    string="Restart"
+                    icon="fa-refresh"
+                    class="oe_highlight"
+                    invisible="job_status not in ('failed')"
+                />
             </tree>
         </field>
     </record>
@@ -17,7 +53,52 @@
         <field name="model">g2p.fetch.social.registry.beneficiary</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button
+                        name="test_connection"
+                        string="Test Connection"
+                        type="object"
+                        class="oe_highlight"
+                    />
+                    <button
+                        name="fetch_social_registry_beneficiary"
+                        string="Import Records"
+                        type="object"
+                        class="oe_highlight"
+                    />
+                    <field
+                        name="job_status"
+                        widget="statusbar"
+                        statusbar_visible="draft,started,running,completed"
+                    />
+                </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            type="action"
+                            name="%(action_social_registry_import_action)d"
+                            string="Start"
+                            icon="fa-play"
+                            class="oe_highlight"
+                            invisible="job_status not in ('draft', 'completed')"
+                        />
+                        <button
+                            type="action"
+                            name="%(action_social_registry_import_action)d"
+                            string="Stop"
+                            icon="fa-stop"
+                            class="oe_highlight"
+                            invisible="job_status not in ('started', 'running')"
+                        />
+                        <button
+                            type="action"
+                            name="%(action_social_registry_import_action)d"
+                            string="Restart"
+                            icon="fa-refresh"
+                            class="oe_highlight"
+                            invisible="job_status not in ('failed')"
+                        />
+                    </div>
                     <group>
                         <field name="name" />
                         <field name="data_source_id" />
@@ -37,12 +118,21 @@
                                     <field name="is_updated" />
                                 </tree>
                             </field>
-                        <button
+                        <!-- <button
                             name="fetch_social_registry_beneficiary"
                             string="Fetch"
                             type="object"
                             class="oe_highlight btn-primary"
-                        />
+                        /> -->
+                    </group>
+                    <group string="Schedule Configuration" invisible="cron_running">
+                        <field name="interval_number" />
+                        <field name="interval_type" />
+                        <field name="cron_running" invisible="1" />
+                    </group>
+                    <group string="Job Information" invisible="job_status == 'draft'">
+                        <field name="start_datetime" readonly="1" />
+                        <field name="end_datetime" readonly="1" />
                     </group>
                 </sheet>
             </form>

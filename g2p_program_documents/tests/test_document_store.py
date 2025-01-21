@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timedelta
 
 from odoo.addons.component.tests.common import TransactionComponentCase
@@ -30,7 +31,7 @@ class TestG2PDocumentStore(TransactionComponentCase):
             }
         )
 
-    def test_add_file_with_program_membership(self):
+    def test_create_file_with_program_membership(self):
         """Test adding a file with program membership association."""
         # triggering entitlement preparation with out membership
         self.ent_manager.prepare_entitlements(self.cycle, self.env["g2p.program_membership"])
@@ -42,14 +43,26 @@ class TestG2PDocumentStore(TransactionComponentCase):
                 "program_id": self.program.id,
             }
         )
-        data = b"Test data1"
-        document1 = self.backend.add_file(data, name="test.txt", program_membership=membership)
+        document1 = self.env["storage.file"].create(
+            {
+                "name": "test.txt",
+                "data": base64.b64encode(b"Test data1"),
+                "backend_id": self.backend.id,
+                "program_membership_id": membership.id,
+            }
+        )
         self.ent_manager.prepare_entitlements(self.cycle, membership)
         self.assertTrue(document1.program_membership_id)
 
         # Retesting with existing document
-        data = b"Test data2"
-        self.backend.add_file(data, name="test.txt", program_membership=membership)
+        _document2 = self.env["storage.file"].create(
+            {
+                "name": "test.txt",
+                "data": base64.b64encode(b"Test data2"),
+                "backend_id": self.backend.id,
+                "program_membership_id": membership.id,
+            }
+        )
 
         # TODO: will revisit this test case
         # cycle2 = self.env["g2p.cycle"].create(

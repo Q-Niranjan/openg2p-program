@@ -1,10 +1,11 @@
 from datetime import timedelta
 
 from odoo import fields
-from odoo.tests.common import TransactionCase
+
+from odoo.addons.component.tests.common import TransactionComponentCase
 
 
-class TestG2PPaymentManager(TransactionCase):
+class TestG2PPaymentManager(TransactionComponentCase):
     def setUp(self):
         super().setUp()
         self.backend = self.env["storage.backend"].create({"name": "Test Backend"})
@@ -66,16 +67,7 @@ class TestG2PPaymentManager(TransactionCase):
         self.assertIn(self.batch_tag.id, self.files_payment_manager.batch_tag_ids.ids)
 
     # TODO : Revisit this code
-    # @patch("odoo.addons.g2p_program_documents.models.document_store.G2PDocumentStore.add_file")
-    # def test_prepare_payments_with_batch(self, mock_add_file):
-    #     mock_add_file.return_value = self.env["storage.file"].create(
-    #         {
-    #             "name": "Test",
-    #             "backend_id": self.id,
-    #             "data": base64.b64encode(data),
-    #             "tags_ids": tags_ids,
-    #         }
-    #     )
+    # def test_prepare_payments_with_batch(self):
     #     payments, batches = self.files_payment_manager._prepare_payments(self.cycle, self.entitlement)
     #     self.assertEqual(len(payments), 1, "Should create one payment")
     #     self.assertEqual(len(batches), 1, "Should create one batch")

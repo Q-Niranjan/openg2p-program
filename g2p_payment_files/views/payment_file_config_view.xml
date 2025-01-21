@@ -8,6 +8,7 @@
             <form string="G2P Payment File Configuration">
                 <group>
                     <field name="name" required="1" />
+                    <field name="tags_ids" widget="many2many_tags" />
                     <field name="type" />
                 </group>
                 <notebook>

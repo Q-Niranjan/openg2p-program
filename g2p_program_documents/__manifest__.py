@@ -8,7 +8,7 @@
     "website": "https://openg2p.org",
     "license": "LGPL-3",
     "depends": [
-        "g2p_documents",
+        "g2p_registry_documents",
         "g2p_programs",
     ],
     "data": [

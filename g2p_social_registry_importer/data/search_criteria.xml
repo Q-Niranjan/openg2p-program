@@ -6,6 +6,68 @@
         <field name="import_registrant_without_id">False</field>
         <field name="target_registry">group</field>
         <field name="target_program" />
+        <field name="output_mapping">{
+
+            "name": .name,
+            "is_group": .isGroup,
+            "given_name": .givenName,
+            "family_name": .familyName,
+            "group_membership_ids": (
+                if .groupMembershipIds? then
+                [
+                    .groupMembershipIds[] |
+                    {
+                    "name": .individual.name,
+                    "kind": .kind.name,
+                    "given_name": .individual.givenName,
+                    "family_name": .individual.familyName,
+                    "addl_name": .individual.addlName,
+                    "email": .individual.email,
+                    "address": .individual.address,
+                    "registration_date": .individual.registrationDate,
+                    "birth_place": .individual.birthPlace,
+                    "birthdate": .individual.birthdate,
+                    "create_date": .individual.createDate,
+                    "write_date": .individual.writeDate,
+                    "reg_ids": (
+                        if .individual.regIds? then
+                        [.individual.regIds[] | {id_type: .idTypeAsStr, value: .value}]
+                        else
+                        []
+                        end
+                    ),
+                    "phone_number_ids": (
+                        if .individual.phoneNumberIds? then
+                        [.individual.phoneNumberIds[] | {phone_no: .phoneNo, phone_sanitized: .phoneSanitized, date_collected: .dateCollected, disabled: .disabled}]
+                        else
+                        []
+                        end
+                    )
+                    }
+                ]
+                else
+                []
+                end
+            ),
+            "reg_ids": (
+                if .regIds? then
+                [.regIds[] | {id_type: .idTypeAsStr, value: .value}]
+                else
+                []
+                end
+            ),
+            "phone_number_ids": (
+                if .phoneNumberIds? then
+                [.phoneNumberIds[] | {phone_no: .phoneNo, phone_sanitized: .phoneSanitized, date_collected: .dateCollected, disabled: .disabled}]
+                else
+                []
+                end
+            )
+
+
+            }
+            </field>
+
         <field name="query">{
             getRegistrants(limit:2){
                 name,

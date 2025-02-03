@@ -112,6 +112,20 @@ msgid "Display Name"
 msgstr ""
 
 #. module: g2p_program_registrant_info
+#. odoo-javascript
+#: code:addons/g2p_program_registrant_info/static/src/xml/g2p_additional_info.xml:0
+#, python-format
+msgid "Done"
+msgstr ""
+
+#. module: g2p_program_registrant_info
+#. odoo-javascript
+#: code:addons/g2p_program_registrant_info/static/src/xml/g2p_additional_info.xml:0
+#, python-format
+msgid "Edit"
+msgstr ""
+
+#. module: g2p_program_registrant_info
 #: model_terms:ir.ui.view,arch_db:g2p_program_registrant_info.view_program_registrant_info_form
 msgid "Enter the registrant name..."
 msgstr ""
@@ -120,6 +134,13 @@ msgstr ""
 #: model:ir.model,name:g2p_program_registrant_info.model_g2p_entitlement
 #: model:ir.model.fields,field_description:g2p_program_registrant_info.field_g2p_program_registrant_info__entitlement_id
 msgid "Entitlement"
+msgstr ""
+
+#. module: g2p_program_registrant_info
+#. odoo-javascript
+#: code:addons/g2p_program_registrant_info/static/src/js/g2p_additional_info.js:0
+#, python-format
+msgid "Error Updating Json"
 msgstr ""
 
 #. module: g2p_program_registrant_info
@@ -150,6 +171,7 @@ msgstr ""
 
 #. module: g2p_program_registrant_info
 #. odoo-javascript
+#: code:addons/g2p_program_registrant_info/static/src/js/g2p_additional_info.js:0
 #: code:addons/g2p_program_registrant_info/static/src/js/g2p_additional_info.js:0
 #, python-format
 msgid "Invalid Json Value"
@@ -196,6 +218,8 @@ msgstr ""
 
 #. module: g2p_program_registrant_info
 #. odoo-javascript
+#: code:addons/g2p_program_registrant_info/static/src/js/g2p_additional_info.js:0
+#: code:addons/g2p_program_registrant_info/static/src/js/g2p_additional_info.js:0
 #: code:addons/g2p_program_registrant_info/static/src/js/g2p_additional_info.js:0
 #: model_terms:ir.ui.view,arch_db:g2p_program_registrant_info.view_group_registrant_info_form
 #: model_terms:ir.ui.view,arch_db:g2p_program_registrant_info.view_individual_registrant_info_form

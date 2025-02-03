@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+        <!-- Inherit and modify the existing record -->
+        <record id="formio.config_param_formio_builder_js_options_default" model="ir.config_parameter">
+            <field
+            name="value"
+            eval="ref('formio_storage_filestore.formio_builder_js_options_storage_filestore')"
+        />
+        </record>
+</odoo>

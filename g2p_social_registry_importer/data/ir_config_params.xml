@@ -20,4 +20,5 @@
         name="set_param"
         eval="('g2p_import_social_registry.max_registrants_count_job_queue', 100)"
     />
+
 </odoo>

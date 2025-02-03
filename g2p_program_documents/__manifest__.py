@@ -2,7 +2,7 @@
 {
     "name": "OpenG2P Program: Documents",
     "category": "G2P",
-    "version": "17.0.0.0.0",
+    "version": "17.0.1.2.0",
     "sequence": 1,
     "author": "OpenG2P",
     "website": "https://openg2p.org",
@@ -17,11 +17,7 @@
         "views/program_membership_view.xml",
         "views/entitlement_view.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "/g2p_program_documents/static/src/js/preview_document.js",
-        ],
-    },
+    "assets": {},
     "demo": [],
     "images": [],
     "application": True,

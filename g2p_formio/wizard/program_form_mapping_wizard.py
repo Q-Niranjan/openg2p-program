@@ -6,7 +6,9 @@ from odoo import fields, models
 class G2PCreateProgramWizard(models.TransientModel):
     _inherit = "g2p.program.create.wizard"
 
-    self_service_portal_form = fields.Many2one("formio.builder", string="Program Form")
+    portal_form_builder_id = fields.Many2one(
+        "formio.builder", string="Program Form", domain="[('is_form_mapped_with_program', '=', False)]"
+    )
 
     is_multiple_form_submission = fields.Boolean(default=False)
 
@@ -14,10 +16,10 @@ class G2PCreateProgramWizard(models.TransientModel):
         res = super().create_program()
 
         program = self.env["g2p.program"].browse(res["res_id"])
-        portal_form = self.self_service_portal_form
+        portal_form = self.portal_form_builder_id
 
         if portal_form:
-            program.self_service_portal_form = portal_form
+            program.portal_form_builder_id = portal_form
 
         program.is_multiple_form_submission = self.is_multiple_form_submission
 

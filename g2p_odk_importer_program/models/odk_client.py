@@ -4,17 +4,11 @@ import odoo.addons.g2p_odk_importer.models.odk_client as base_odk_client
 
 
 def patched_addl_data(self, mapped_json):
-    config = self.env["odk.config"].browse(self.id)
+    odk_import = self.env["odk.import"].browse(self.id)
 
-    program_id = config.program.id
+    program_id = odk_import.target_program.id
 
-    if "program_registrant_info_ids" in mapped_json:
-        prog_reg_info = mapped_json.get("program_registrant_info_ids", None)
-
-        if not program_id:
-            del mapped_json["program_registrant_info_ids"]
-            return mapped_json
-
+    if program_id:
         mapped_json["program_membership_ids"] = [
             (
                 0,
@@ -26,6 +20,13 @@ def patched_addl_data(self, mapped_json):
                 },
             )
         ]
+
+    if "program_registrant_info_ids" in mapped_json:
+        prog_reg_info = mapped_json.get("program_registrant_info_ids", None)
+
+        if not program_id:
+            del mapped_json["program_registrant_info_ids"]
+            return mapped_json
 
         mapped_json["program_registrant_info_ids"] = [
             (

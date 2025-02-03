@@ -19,11 +19,6 @@ msgid "ODK Import"
 msgstr ""
 
 #. module: g2p_odk_importer_program
-#: model:ir.model.fields,field_description:g2p_odk_importer_program.field_odk_import__program
-msgid "Program"
-msgstr ""
-
-#. module: g2p_odk_importer_program
-#: model_terms:ir.ui.view,arch_db:g2p_odk_importer_program.view_program_odk_config_form
-msgid "Program details"
+#: model:ir.model.fields,field_description:g2p_odk_importer_program.field_odk_import__target_program
+msgid "Target Program"
 msgstr ""

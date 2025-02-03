@@ -5,10 +5,8 @@
         <field name="model">odk.import</field>
         <field name="inherit_id" ref="g2p_odk_importer.view_odk_import_form" />
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <group string="Program details">
-                    <field name="program" />
-                </group>
+            <xpath expr="//field[@name='target_registry']" position="after">
+                <field name="target_program" />
             </xpath>
         </field>
     </record>

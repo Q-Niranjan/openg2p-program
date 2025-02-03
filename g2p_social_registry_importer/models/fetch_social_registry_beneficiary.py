@@ -3,8 +3,8 @@ import logging
 import uuid
 from datetime import datetime, timezone
 
+import jq
 import requests
-from camel_converter import dict_to_snake
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
@@ -39,20 +39,126 @@ class G2PFetchSocialRegistryBeneficiary(models.Model):
     query = fields.Text(
         required=True,
     )
+    output_mapping = fields.Text(required=True)
 
     last_sync_date = fields.Datetime(string="Last synced on", required=False)
 
     imported_registrant_ids = fields.One2many(
         "g2p.social.registry.imported.registrants",
         "fetch_social_registry_id",
-        "Imported Regsitrants",
+        "Imported Registrants",
         readonly=True,
     )
+
+    job_status = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("started", "Started"),
+            ("running", "Running"),
+            ("completed", "Completed"),
+            ("failed", "Failed"),
+        ],
+        default="draft",
+    )
+
+    start_datetime = fields.Datetime("Start Time")
+    end_datetime = fields.Datetime("End Time")
+    cron_id = fields.Many2one("ir.cron", string="Cron Job")
+
+    interval_number = fields.Integer(default=1, help="Repeat every x.")
+    interval_type = fields.Selection(
+        [
+            ("minutes", "Minutes"),
+            ("hours", "Hours"),
+            ("days", "Days"),
+            ("weeks", "Weeks"),
+            ("months", "Months"),
+        ],
+        string="Interval Unit",
+        default="hours",
+    )
+    cron_running = fields.Boolean(compute="_compute_cron_running")
+
+    def test_connection(self):
+        """Test the connection to the Social Registry API by validating:
+        1. Data source configuration
+        2. Authentication endpoints
+        3. Authentication credentials
+        4. Successful token retrieval
+        """
+        self.ensure_one()
+        try:
+            # Step 1: Validate data source configuration
+            if not self.data_source_id:
+                raise Exception(_("Data source is not configured"))
+
+            if not self.data_source_id.url:
+                raise Exception(_("Data source URL is not configured"))
+
+            # Step 2: Get and validate paths
+            paths = self.get_data_source_paths()
+            auth_url = self.get_social_registry_auth_url(paths)
+
+            # Step 3: Validate required credentials
+            client_id = (
+                self.env["ir.config_parameter"].sudo().get_param("g2p_import_social_registry.client_id")
+            )
+            client_secret = (
+                self.env["ir.config_parameter"].sudo().get_param("g2p_import_social_registry.client_password")
+            )
+            grant_type = (
+                self.env["ir.config_parameter"].sudo().get_param("g2p_import_social_registry.grant_type")
+            )
+
+            if not all([client_id, client_secret, grant_type]):
+                raise Exception(_("Missing credentials: Please configure client ID, secret and grant type"))
+
+            # Step 4: Test authentication
+            auth_token = self.get_auth_token(auth_url)
+            if not auth_token:
+                raise Exception(_("Authentication failed: No token received"))
+
+            # If we get here, all checks passed
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Connection Test"),
+                    "message": _("Successfully connected to Social Registry API and authenticated"),
+                    "type": "success",
+                    "sticky": False,
+                },
+            }
+
+        except Exception as e:
+            _logger.error("Error during connection test: %s", str(e), exc_info=True)
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Connection Test Failed"),
+                    "message": str(e),
+                    "type": "danger",
+                    "sticky": True,
+                },
+            }
 
     @api.onchange("registry")
     def onchange_target_registry(self):
         for rec in self:
             rec.target_program = None
+
+    @api.constrains("output_mapping")
+    def constraint_json_fields(self):
+        for rec in self:
+            if rec.output_mapping:
+                try:
+                    # Validate the JSON Query (jq expression)
+                    jq.compile(rec.output_mapping)
+                except ValueError as ve:
+                    raise ValidationError(
+                        _("The provided value for 'Output Mapping' is not a valid jq expression.")
+                    ) from ve
 
     def get_data_source_paths(self):
         self.ensure_one()
@@ -240,8 +346,8 @@ class G2PFetchSocialRegistryBeneficiary(models.Model):
         return partner_id, clean_identifiers
 
     def get_individual_data(self, record):
-        vals = dict_to_snake(record)
-        return vals
+        mapped_json = jq.first(self.output_mapping, record)
+        return mapped_json
 
     def get_member_kind(self, data):
         # TODO: Kind will be in List
@@ -430,19 +536,32 @@ class G2PFetchSocialRegistryBeneficiary(models.Model):
                 self.process_record(record)
 
     def process_registrants_async(self, registrants, count):
+        """Queue registrants for asynchronous processing in batches."""
+
         max_registrant = int(
             self.env["ir.config_parameter"]
             .sudo()
             .get_param("g2p_import_social_registry.max_registrants_count_job_queue")
         )
-        _logger.warning("Fetching Registrant Asynchronously!")
+        actual_count = min(len(registrants), count)
+
+        total_batches = -(-actual_count // max_registrant)
+
         jobs = []
         for i in range(0, count, max_registrant):
-            jobs.append(self.delayable().process_registrants(registrants[i : i + max_registrant]))
+            batch = registrants[i : i + max_registrant]
+            batch_num = i // max_registrant + 1
+
+            description = f"{self.name} - Batch {batch_num}/{total_batches} ({len(batch)} registrants)"
+            jobs.append(self.delayable(description=description).process_registrants(batch))
+
+        # Queue all batch jobs
         main_job = group(*jobs)
         main_job.delay()
 
     def fetch_social_registry_beneficiary(self):
+        self.write({"job_status": "running", "start_datetime": fields.Datetime.now()})
+
         config_parameters = self.env["ir.config_parameter"].sudo()
         today_isoformat = datetime.now(timezone.utc).isoformat()
         social_registry_version = config_parameters.get_param("social_registry_version")
@@ -539,10 +658,13 @@ class G2PFetchSocialRegistryBeneficiary(models.Model):
             self.last_sync_date = fields.Datetime.now()
 
         else:
+            self.write({"job_status": "failed", "end_datetime": fields.Datetime.now()})
             kind = "danger"
             message = response.json().get("error", {}).get("message", "")
             if not message:
                 message = _("{reason}: Unable to connect to API.").format(reason=response.reason)
+
+        self.write({"job_status": "completed", "end_datetime": fields.Datetime.now()})
 
         action = {
             "type": "ir.actions.client",
@@ -558,3 +680,65 @@ class G2PFetchSocialRegistryBeneficiary(models.Model):
             },
         }
         return action
+
+    def social_registry_import_action_trigger(self):
+        """
+        Trigger the social registry import action based on scheduled_import configuration
+        """
+
+        for rec in self:
+            if rec.job_status in ["draft", "completed", "failed"]:
+                # Start the scheduled import
+                rec.write({"job_status": "started", "start_datetime": fields.Datetime.now()})
+                # Create or update cron job
+                cron_vals = {
+                    "name": f"Social Registry Import - {rec.name} #{rec.id}",
+                    "active": True,
+                    "interval_number": rec.interval_number,
+                    "interval_type": rec.interval_type,
+                    "model_id": self.env["ir.model"]
+                    .search([("model", "=", "g2p.fetch.social.registry.beneficiary")])
+                    .id,
+                    "state": "code",
+                    "code": f"model.browse({rec.id}).fetch_social_registry_beneficiary()",
+                    "doall": False,
+                    "numbercall": -1,
+                }
+
+                if rec.cron_id:
+                    rec.cron_id.write(cron_vals)
+                else:
+                    rec.cron_id = self.env["ir.cron"].sudo().create(cron_vals)
+
+                message = _(
+                    "Scheduled import started - will run every %(interval_number)s %(interval_type)s"
+                ) % {
+                    "interval_number": rec.interval_number,
+                    "interval_type": rec.interval_type,
+                }
+
+            elif rec.job_status in ["started", "running"]:
+                # Stop the scheduled import
+                rec.write({"job_status": "completed", "end_datetime": fields.Datetime.now()})
+                if rec.cron_id:
+                    rec.cron_id.unlink()
+                    rec.cron_id = None
+                message = _("Scheduled import stopped")
+
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Social Registry Import"),
+                    "message": message,
+                    "type": "success",
+                    "sticky": False,
+                },
+            }
+
+    def _compute_cron_running(self):
+        """Compute whether the cron job is currently running for this import"""
+        for rec in self:
+            rec.cron_running = bool(
+                rec.cron_id and rec.cron_id.active and rec.job_status in ["started", "running"]
+            )

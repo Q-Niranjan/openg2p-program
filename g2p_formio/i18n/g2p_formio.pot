@@ -19,6 +19,16 @@ msgid "Create a New Program Wizard"
 msgstr ""
 
 #. module: g2p_formio
+#: model:ir.model,name:g2p_formio.model_formio_builder
+msgid "Form Builder"
+msgstr ""
+
+#. module: g2p_formio
+#: model:ir.model.fields,field_description:g2p_formio.field_formio_builder__is_form_mapped_with_program
+msgid "Is Form Mapped"
+msgstr ""
+
+#. module: g2p_formio
 #: model:ir.model.fields,field_description:g2p_formio.field_g2p_program__is_multiple_form_submission
 #: model:ir.model.fields,field_description:g2p_formio.field_g2p_program_create_wizard__is_multiple_form_submission
 msgid "Is Multiple Form Submission"
@@ -36,8 +46,8 @@ msgid "Program"
 msgstr ""
 
 #. module: g2p_formio
-#: model:ir.model.fields,field_description:g2p_formio.field_g2p_program__self_service_portal_form
-#: model:ir.model.fields,field_description:g2p_formio.field_g2p_program_create_wizard__self_service_portal_form
+#: model:ir.model.fields,field_description:g2p_formio.field_g2p_program__portal_form_builder_id
+#: model:ir.model.fields,field_description:g2p_formio.field_g2p_program_create_wizard__portal_form_builder_id
 msgid "Program Form"
 msgstr ""
 

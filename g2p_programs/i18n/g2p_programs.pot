@@ -2567,6 +2567,11 @@ msgid "Have Beneficiaries"
 msgstr ""
 
 #. module: g2p_programs
+#: model:ir.model.fields,field_description:g2p_programs.field_g2p_program_membership__hide_peppol_fields
+msgid "Hide Peppol Fields"
+msgstr ""
+
+#. module: g2p_programs
 #: model:ir.model.fields,field_description:g2p_programs.field_g2p_assign_payments_batch_wizard__id
 #: model:ir.model.fields,field_description:g2p_programs.field_g2p_assign_program_registrants__id
 #: model:ir.model.fields,field_description:g2p_programs.field_g2p_assign_program_wizard__id
@@ -2840,6 +2845,11 @@ msgstr ""
 #. module: g2p_programs
 #: model:ir.model.fields,field_description:g2p_programs.field_g2p_program_membership__invoice_ids
 msgid "Invoices"
+msgstr ""
+
+#. module: g2p_programs
+#: model:ir.model.fields,field_description:g2p_programs.field_g2p_program_membership__is_coa_installed
+msgid "Is Coa Installed"
 msgstr ""
 
 #. module: g2p_programs

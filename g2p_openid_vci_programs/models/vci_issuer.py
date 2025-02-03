@@ -77,7 +77,9 @@ class BeneficiaryOpenIDVCIssuer(models.Model):
                     "curr_datetime": curr_datetime,
                     "partner": partner_dict,
                     "partner_address": self.get_full_address(partner.address),
-                    "partner_face": self.get_image_base64_data_in_url(partner.image_1920.decode()),
+                    "partner_face": self.get_image_base64_data_in_url(partner.image_1920.decode())
+                    if partner.image_1920
+                    else None,
                     "reg_ids": reg_ids_dict,
                     "program_membership": program_membership_dict,
                     "program": program_dict,

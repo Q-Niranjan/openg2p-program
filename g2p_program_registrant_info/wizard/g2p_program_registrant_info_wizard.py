@@ -1,10 +1,8 @@
 # Part of OpenG2P. See LICENSE file for full copyright and licensing details.
-
-import base64
 import logging
-from io import BytesIO
+import uuid
 
-from odoo import models
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
@@ -42,15 +40,15 @@ class G2pProgramRegistrantInfo(models.TransientModel):
                 if isinstance(data.get(key), list):
                     value = data[key]
                     if value:
-                        if not program.supporting_documents_store:
+                        if not program.get_documents_store():
                             _logger.error("Supporting Documents Store is not set in Program Configuration")
                             data[key] = None
                             continue
                         data[key] = self.add_files_to_store(
                             value,
-                            program.supporting_documents_store,
+                            program.get_documents_store(),
                             program_membership=membership,
-                            tags=key,
+                            tags=[key],
                         )
                         if not data[key]:
                             _logger.warning("Empty/No File received for field %s", key)
@@ -59,27 +57,27 @@ class G2pProgramRegistrantInfo(models.TransientModel):
             _logger.exception("An error occurred while jsonizing form data: %s", str(e))
         return data
 
-    @staticmethod
-    def add_files_to_store(files, store, program_membership=None, tags=None):
+    @api.model
+    def add_files_to_store(self, files, store, program_membership=None, tags=None):
         file_details = []
+        DOC_TAGS = self.env["g2p.document.tag"]
         try:
             for file in files:
                 if file and store:
-                    binary_data = base64.b64decode(file.datas)
-                    filestream = BytesIO(binary_data)
-                    document_extenstion = "." + file.mimetype.split("/")[1]
-                    document_file = store.add_file(
-                        filestream.read(),
-                        extension=document_extenstion,
-                        program_membership=program_membership,
-                        tags=tags,
+                    document_file = self.env["storage.file"].create(
+                        {
+                            "name": f"{str(uuid.uuid4())}.{file.mimetype.split('/')[1]}",
+                            "backend_id": store.id,
+                            "data": file.datas,
+                            "program_membership_id": program_membership.id,
+                            "tags_ids": [(4, DOC_TAGS.get_or_create_tag_from_name(tag)) for tag in tags],
+                        }
                     )
                     if document_file:
-                        document_uuid = document_file.name.split(".")[0]
                         file_details.append(
                             {
                                 "document_id": document_file.id,
-                                "document_uuid": document_uuid,
+                                "document_uuid": document_file.name,
                                 "document_name": document_file.name,
                                 "document_slug": document_file.slug,
                                 "document_url": document_file.url,

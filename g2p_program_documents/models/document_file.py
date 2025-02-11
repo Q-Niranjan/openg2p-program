@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class G2PDocument(models.Model):
@@ -8,10 +8,18 @@ class G2PDocument(models.Model):
 
     entitlement_id = fields.Many2one("g2p.entitlement")
 
-    def get_record(self):
-        for record in self:
-            return {
-                "mimetype": record.mimetype,
-                "name": record.name,
-                "url": record.url if record.url else "#",
-            }
+    @api.constrains("entitlement_id")
+    def _constrains_entitlement_id(self):
+        for rec in self:
+            if not rec.program_membership_id:
+                prog_mem = rec.partner_id.program_membership_ids.filtered(
+                    lambda x: x.program_id.id == rec.program_id.id
+                )
+                if prog_mem:
+                    rec.program_membership_id = prog_mem[0]
+
+    @api.constrains("program_membership_id")
+    def _constrains_program_membership_id(self):
+        for rec in self:
+            if not rec.registrant_id:
+                rec.registrant_id = rec.program_membership_id.partner_id

@@ -9,11 +9,15 @@
                 <page string="Documents" name="documents">
                     <field name="supporting_documents_ids" nolabel="1" colspan="2">
                         <tree default_order="id desc">
+                            <field name="name" readonly="1" column_invisible="1" />
                             <field name="tags_ids" widget="many2many_tags" />
                             <field name="slug" string="Name" />
+                            <field name="url" readonly="1" column_invisible="1" />
                             <field name="file_size" />
                             <field name="file_type" />
-                            <widget name="action_preview" />
+                            <field name="mimetype" readonly="1" column_invisible="1" />
+                            <!-- Widget provided by g2p_documents module for document preview and viewing -->
+                            <widget name="g2p_documents_action_preview" />
                         </tree>
                     </field>
                 </page>

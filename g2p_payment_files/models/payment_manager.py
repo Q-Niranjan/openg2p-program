@@ -44,7 +44,7 @@ class G2PFilesPaymentManager(models.Model):
 
         file_document_store = self.file_document_store
         if not file_document_store:
-            file_document_store = self.program_id.supporting_documents_store
+            file_document_store = self.program_id.get_documents_store()
         if self.create_batch:
             if batches:
                 # Render all qrcodes and store for all payment batches

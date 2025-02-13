@@ -12,8 +12,8 @@ class G2PDocument(models.Model):
     def _constrains_entitlement_id(self):
         for rec in self:
             if not rec.program_membership_id:
-                prog_mem = rec.partner_id.program_membership_ids.filtered(
-                    lambda x: x.program_id.id == rec.program_id.id
+                prog_mem = rec.entitlement_id.partner_id.program_membership_ids.filtered(
+                    lambda x: x.program_id.id == rec.entitlement_id.program_id.id
                 )
                 if prog_mem:
                     rec.program_membership_id = prog_mem[0]

@@ -53,11 +53,6 @@ msgid "Program Membership"
 msgstr ""
 
 #. module: g2p_program_documents
-#: model:ir.model,name:g2p_program_documents.model_storage_backend
-msgid "Storage Backend"
-msgstr ""
-
-#. module: g2p_program_documents
 #: model:ir.model,name:g2p_program_documents.model_storage_file
 msgid "Storage File"
 msgstr ""

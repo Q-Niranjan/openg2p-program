@@ -330,6 +330,11 @@ msgid "String"
 msgstr ""
 
 #. module: g2p_payment_files
+#: model:ir.model.fields,field_description:g2p_payment_files.field_g2p_payment_file_config__tags_ids
+msgid "Tags"
+msgstr ""
+
+#. module: g2p_payment_files
 #: model_terms:ir.ui.view,arch_db:g2p_payment_files.view_payment_file_config_form
 msgid "Template"
 msgstr ""

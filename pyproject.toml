@@ -27,7 +27,9 @@ dependencies = [
     "odoo-addon-g2p_program_registrant_info @ {root:uri}/g2p_program_registrant_info",
     "odoo-addon-g2p_program_reimbursement @ {root:uri}/g2p_program_reimbursement",
     "odoo-addon-g2p_programs @ {root:uri}/g2p_programs",
+    "odoo-addon-g2p_programs_priority_list @ {root:uri}/g2p_programs_priority_list",
     "odoo-addon-g2p_proxy_means_test @ {root:uri}/g2p_proxy_means_test",
+    "odoo-addon-g2p_reimbursement_portal @ {root:uri}/g2p_reimbursement_portal",
     "odoo-addon-g2p_social_registry_importer @ {root:uri}/g2p_social_registry_importer",
     "odoo-addon-g2p_theme @ {root:uri}/g2p_theme",
 ]

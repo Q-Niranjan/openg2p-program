@@ -1,3 +1,6 @@
+import base64
+import uuid
+
 import pdfkit
 
 from odoo import fields, models
@@ -18,6 +21,11 @@ class G2PPaymentFileConfig(models.Model):
         default="pdf",
     )
 
+    tags_ids = fields.Many2many(
+        "g2p.document.tag",
+        default=lambda self: self.env["g2p.document.tag"].get_or_create_tag_from_name("System Generated").ids,
+    )
+
     # body_html = fields.Html(
     #     compute="_compute_html_preview",
     #     store=False,
@@ -36,7 +44,14 @@ class G2PPaymentFileConfig(models.Model):
         document_files = []
         for res_id in res_ids:
             document_files.append(
-                document_store.add_file(self.render_template(res_model, res_id), extension="." + self.type)
+                self.env["storage.file"].create(
+                    {
+                        "name": f"{str(uuid.uuid4())}.{self.type}",
+                        "backend_id": document_store.id,
+                        "data": base64.b64encode(self.render_template(res_model, res_id)),
+                        "tags_ids": [(4, tag.id) for tag in self.tags_ids],
+                    }
+                )
             )
         return document_files
 

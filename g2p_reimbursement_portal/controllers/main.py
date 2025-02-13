@@ -1,5 +1,7 @@
+import base64
 import json
 import logging
+import uuid
 
 from werkzeug.datastructures import FileStorage
 from werkzeug.exceptions import Forbidden
@@ -126,9 +128,7 @@ class ReimbursementPortal(AgentPortalBase):
             # TODO: Check current partner not part of prog memberships of
             # reimbursement program.
 
-            supporting_documents_store = (
-                entitlement.program_id.reimbursement_program_id.supporting_documents_store
-            )
+            supporting_documents_store = entitlement.program_id.reimbursement_program_id.get_documents_store()
 
             # TODO: remove all hardcoding in the next lines
             received_code = form_data.get("voucher_code", None)
@@ -241,20 +241,25 @@ class ReimbursementPortal(AgentPortalBase):
             files = [
                 files,
             ]
+        DOC_TAGS = store.env["g2p.document.tag"]
         file_details = []
         for file in files:
             if store and file.filename:
+                document_uuid = str(uuid.uuid4())
                 if len(file.filename.split(".")) > 1:
-                    supporting_document_ext = "." + file.filename.split(".")[-1]
+                    document_name = f"{document_uuid}.{file.filename.split('.')[-1]}"
                 else:
-                    supporting_document_ext = None
-                document_file = store.add_file(
-                    file.stream.read(),
-                    extension=supporting_document_ext,
-                    program_membership=program_membership,
-                    tags=tags,
+                    document_name = document_uuid
+                document_file = store.env["storage.file"].create(
+                    {
+                        "name": document_name,
+                        "backend_id": store.id,
+                        "data": base64.b64encode(file.stream.read()),
+                        "program_membership_id": program_membership,
+                        "tags_ids": [(4, DOC_TAGS.get_or_create_tag_from_name(tag)) for tag in tags],
+                    }
                 )
-                document_uuid = document_file.name.split(".")[0]
+
                 file_details.append(
                     {
                         "document_id": document_file.id,
@@ -280,6 +285,6 @@ class ReimbursementPortal(AgentPortalBase):
         all_file_details = []
         for tag, document in documents.items():
             all_file_details += self.add_file_to_store(
-                document, store, program_membership=membership, tags=tag
+                document, store, program_membership=membership, tags=[tag]
             )
         return all_file_details

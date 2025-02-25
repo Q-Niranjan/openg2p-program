@@ -20,6 +20,10 @@ class G2PProgram(models.Model):
     def _update_form_JS_options(self, formio_builder, upload_url):
         try:
             js_options = json.loads(formio_builder.formio_js_options)
+
+            if js_options:
+                formio_builder.write({"is_form_mapped_with_program": True})
+
             if not js_options.get("editForm", {}).get("file"):
                 return False
 
@@ -29,12 +33,7 @@ class G2PProgram(models.Model):
                 if component.get("key") == "url":
                     component["defaultValue"] = upload_url
 
-            formio_builder.write(
-                {
-                    "formio_js_options": json.dumps(js_options, indent=1),
-                    "is_form_mapped_with_program": True,
-                }
-            )
+            formio_builder.write({"formio_js_options": json.dumps(js_options, indent=1)})
             return True
 
         except Exception as e:
